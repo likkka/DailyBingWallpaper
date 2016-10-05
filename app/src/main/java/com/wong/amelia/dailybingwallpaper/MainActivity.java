@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,6 +34,7 @@ import retrofit.Retrofit;
 import rx.Scheduler;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action0;
 import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
@@ -42,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     FrameLayout layout;
     Button button;
     TextView detail;
+    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         layout = (FrameLayout) findViewById(R.id.bg);
         detail = (TextView) findViewById(R.id.describe);
         button = (Button) findViewById(R.id.button);
+        progressBar = (ProgressBar) findViewById(R.id.progressbar);
         button.setOnClickListener(this);
     }
 
@@ -63,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         BingClient client = ServiceGenerator.createService(BingClient.class);
         rx.Observable
                 .just(client.fetchBingWallpaperInfos("js", 0, 1))
+                .doOnSubscribe(showProgressAction)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .map(infos2strF)
@@ -70,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .map(setWallpaperF)
                 .map(save2diskF)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(setBgAction);
+                .subscribe(uiRefreshSubscriber);
 
     }
 
@@ -162,9 +167,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
-    Action1<LocalWallpaperInfo> setBgAction = new Action1<LocalWallpaperInfo>() {
+    Action0 showProgressAction = new Action0() {
         @Override
-        public void call(LocalWallpaperInfo info) {
+        public void call() {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    progressBar.setVisibility(View.VISIBLE);
+                }
+            });
+        }
+    };
+
+
+    Subscriber<LocalWallpaperInfo> uiRefreshSubscriber = new Subscriber<LocalWallpaperInfo>() {
+        @Override
+        public void onCompleted() {
+            progressBar.setVisibility(View.INVISIBLE);
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            makeToast("error! :" + e.getMessage());
+        }
+
+        @Override
+        public void onNext(LocalWallpaperInfo info) {
             layout.setBackground(new BitmapDrawable(info.getWallpaper()));
             detail.setText(info.getDate() + "\n" + info.getDescribption());
         }
