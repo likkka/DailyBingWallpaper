@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+    <TextView
+        android:layout_marginTop="@dimen/widget_detail_marigin"
+        android:layout_marginBottom="@dimen/widget_detail_marigin"
+        android:ellipsize="marquee"
+        android:id="@+id/widget_detail"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/widget_bg"
+        android:gravity="center"
+        android:text="@string/default_detail"
+        android:layout_weight="1" />
+    <Button
+        android:id="@+id/widget_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/widget_refresh"
+        android:layout_weight="3" />
+</LinearLayout>

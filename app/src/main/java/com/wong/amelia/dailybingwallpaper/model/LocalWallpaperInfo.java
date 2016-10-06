@@ -9,6 +9,15 @@ public class LocalWallpaperInfo {
     Bitmap wallpaper = null;
     String describption = null;
     String date = null;
+    boolean inUse = false;
+
+    public boolean isInUse() {
+        return inUse;
+    }
+
+    public void setInUse(boolean inUse) {
+        this.inUse = inUse;
+    }
 
     public String getUrl() {
         return url;
