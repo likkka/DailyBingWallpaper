@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 
 import retrofit.Call;
+import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
@@ -52,7 +53,7 @@ public class RxController {
     }
 
     public synchronized String getDailyWallpaperDate(BingWallpaperInfos infos) {
-        return infos.images.get(0).startdate;
+        return infos.images.get(0).enddate;
     }
 
     public synchronized String getDailyWallpaperDescribption(BingWallpaperInfos infos) {
@@ -180,12 +181,6 @@ public class RxController {
             Log.e(MainActivity.TAG, "load new: context = null");
             return;
         }
-        if (!WallpaperHelper.isNetworkConnected(context)) {
-            MainActivity.makeToast(context, "请打开网络更新bing壁纸.");
-            Log.e(MainActivity.TAG, "network unavailable");
-            return;
-        }
-
         BingClient client = ServiceGenerator.createService(BingClient.class);
         rx.Observable
                 .just(client.fetchBingWallpaperInfos("js", 0, 1))

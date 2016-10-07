@@ -36,8 +36,16 @@ public class DetailWidgetProvider extends AppWidgetProvider implements UiControl
         if (contextWeakRefer == null || contextWeakRefer.get() == null) {
             contextWeakRefer = new WeakReference<>(context);
         }
-        RxController controller = new RxController(context, this);
-        controller.loadNewWallpaper();
+        if (WallpaperHelper.isNetworkConnected(context)) {
+            RxController controller = new RxController(context, this);
+            controller.loadNewWallpaper();
+            MainActivity.makeToast(context, "正在更新bing壁纸");
+        } else {
+            LocalWallpaperInfo defaultInfo = new LocalWallpaperInfo();
+            defaultInfo.setDate("00000000");
+            defaultInfo.setDescribption(context.getResources().getString(R.string.default_detail));
+            refreshWidgetUi(defaultInfo);
+        }
     }
 
     @Override
@@ -45,7 +53,6 @@ public class DetailWidgetProvider extends AppWidgetProvider implements UiControl
         super.onReceive(context, intent);
         if (TextUtils.equals(intent.getAction(), REFRESH_ACTION)) {
             refreshOnUpdate(context);
-            MainActivity.makeToast(context, "正在更新bing壁纸");
         }
     }
 

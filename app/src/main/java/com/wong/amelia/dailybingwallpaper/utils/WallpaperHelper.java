@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.RemoteViews;
 
@@ -58,15 +59,17 @@ public class WallpaperHelper {
         }
         RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget);
         String date = info.getDate();
-        String pat1 = "yyyyMMdd";//date:20161005 --> 2016/10/05
-        String pat2 = "yyyy/MM/dd";
-        SimpleDateFormat format1 = new SimpleDateFormat(pat1);
-        SimpleDateFormat format2 = new SimpleDateFormat(pat2);
-        try {
-            Date d = format1.parse(date);
-            date = format2.format(d);
-        } catch (ParseException e) {
-            e.printStackTrace();
+        if (!TextUtils.equals(date, "00000000")) {
+            String pat1 = "yyyyMMdd";//date:20161005 --> 2016/10/05
+            String pat2 = "yyyy/MM/dd";
+            SimpleDateFormat format1 = new SimpleDateFormat(pat1);
+            SimpleDateFormat format2 = new SimpleDateFormat(pat2);
+            try {
+                Date d = format1.parse(date);
+                date = format2.format(d);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
         String detail = date + "\n" + info.getDescribption();
         remoteViews.setTextViewText(R.id.widget_detail, detail);
