@@ -27,6 +27,8 @@ import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 import com.wong.amelia.dailybingwallpaper.MainActivity;
+import com.wong.amelia.dailybingwallpaper.utils.WallpaperHelper;
+
 /**
  * Created by amelia on 5/10/16.
  */
@@ -173,6 +175,17 @@ public class RxController {
     };
 
     public void loadNewWallpaper() {
+        Context context = contextWeakRefer.get();
+        if (context == null) {
+            Log.e(MainActivity.TAG, "load new: context = null");
+            return;
+        }
+        if (!WallpaperHelper.isNetworkConnected(context)) {
+            MainActivity.makeToast(context, "请打开网络更新bing壁纸.");
+            Log.e(MainActivity.TAG, "network unavailable");
+            return;
+        }
+
         BingClient client = ServiceGenerator.createService(BingClient.class);
         rx.Observable
                 .just(client.fetchBingWallpaperInfos("js", 0, 1))

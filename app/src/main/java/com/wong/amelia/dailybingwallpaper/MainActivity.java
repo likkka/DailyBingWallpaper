@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public static void makeToast(Context context, String string) {
-        //只能在子线程中
+        //只能在main线程中
         Toast.makeText(context, string, Toast.LENGTH_LONG).show();
     }
 

@@ -7,6 +7,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 import android.widget.RemoteViews;
 
@@ -77,5 +79,21 @@ public class WallpaperHelper {
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(contextRefer.get());
         ComponentName componentName = new ComponentName(contextRefer.get(), DetailWidgetProvider.class);
         appWidgetManager.updateAppWidget(componentName, remoteViews);
+    }
+
+    /**
+     * 只关注是否联网
+     * @param context
+     * @return
+     */
+    public static boolean isNetworkConnected(Context context) {
+        if (context != null) {
+            ConnectivityManager mConnectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
+            if (mNetworkInfo != null) {
+                return mNetworkInfo.isAvailable();
+            }
+        }
+        return false;
     }
 }
